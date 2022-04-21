@@ -36,6 +36,8 @@ class RepositoryFragment: MvpAppCompatFragment(), RepositoryView  {
     ): View {
         _binding = FragmentRepositoryBinding.inflate(inflater, container, false)
 
+        binding.back.setOnClickListener { back() }
+
         return binding.root
     }
 
@@ -62,6 +64,6 @@ class RepositoryFragment: MvpAppCompatFragment(), RepositoryView  {
     }
 
     override fun back() {
-        TODO("Not yet implemented")
+        repositoryPresenter.backToMain()
     }
 }

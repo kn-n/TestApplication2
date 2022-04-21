@@ -54,7 +54,7 @@ class RepositoriesPresenter @Inject constructor(private val router: Router) : Mv
         } else {
             val searchResult: ArrayList<Repository> = ArrayList()
             for (rep in allRep) {
-                if (rep.full_name.contains(query) || rep.description.contains(query)){
+                if (rep.full_name.contains(query) || rep.description!!.contains(query)){
                     searchResult.add(rep)
                 }
             }
