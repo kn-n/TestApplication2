@@ -84,7 +84,7 @@ dependencies {
     implementation 'com.squareup.picasso:picasso:2.71828'
 
     //google play services auth
-    implementation 'com.google.android.gms:play-services-auth:20.1.0'
+    implementation 'com.google.android.gms:play-services-auth:20.0.0'
 
     implementation 'com.github.rahatarmanahmed:circularprogressview:2.5.0'
 

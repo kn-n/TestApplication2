@@ -1,4 +1,4 @@
-package ru.kn_n.testapplication2.presentation.repository
+package ru.kn_n.testapplication2.presentation.view.repository
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -12,10 +12,12 @@ import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 import ru.kn_n.testapplication2.databinding.FragmentRepositoryBinding
 import ru.kn_n.testapplication2.di.Scopes
+import ru.kn_n.testapplication2.presentation.presenter.RepositoryPresenter
 import ru.kn_n.testapplication2.utils.makeDate
 import toothpick.Toothpick
 
 const val REPOSITORY = "repo"
+const val UID = "id"
 
 class RepositoryFragment: MvpAppCompatFragment(), RepositoryView  {
 
@@ -36,8 +38,6 @@ class RepositoryFragment: MvpAppCompatFragment(), RepositoryView  {
     ): View {
         _binding = FragmentRepositoryBinding.inflate(inflater, container, false)
 
-        binding.back.setOnClickListener { back() }
-
         return binding.root
     }
 
@@ -46,24 +46,31 @@ class RepositoryFragment: MvpAppCompatFragment(), RepositoryView  {
         arguments?.takeIf { it.containsKey(REPOSITORY) }?.apply {
             val repo = Json.decodeFromString(Repository.serializer(), getString(REPOSITORY)!!)
             binding.repository = repo
+            val id = getString(UID)!!
             Picasso.get().load(repo.owner.avatar_url).into(binding.userImg)
             binding.dateOfCreation.text = makeDate(repo.created_at)
+            binding.back.setOnClickListener { back(id) }
+            if (repositoryPresenter.checkRepoInDB(id, repo, requireContext())) {
+                binding.btnSaveDelete.isSelected = true
+                binding.btnSaveDelete.setOnClickListener { deleteFromSaved(id, repo) }
+            } else {
+                binding.btnSaveDelete.isSelected = false
+                binding.btnSaveDelete.setOnClickListener { addToSaved(id, repo) }
+            }
         }
     }
 
-    override fun showInformation() {
-        TODO("Not yet implemented")
+    override fun addToSaved(id: String, repo:Repository) {
+        binding.btnSaveDelete.isSelected = true
+        repositoryPresenter.addRepositoryToSaved(id, repo, requireContext())
     }
 
-    override fun addToSaved() {
-        TODO("Not yet implemented")
+    override fun deleteFromSaved(id: String, repo:Repository) {
+        binding.btnSaveDelete.isSelected = false
+        repositoryPresenter.deleteRepositoryFromSaved(id, repo.full_name, requireContext())
     }
 
-    override fun deleteFromSaved() {
-        TODO("Not yet implemented")
-    }
-
-    override fun back() {
-        repositoryPresenter.backToMain()
+    override fun back(id: String) {
+        repositoryPresenter.backToMain(id)
     }
 }
